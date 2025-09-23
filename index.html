@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thu thập ngày sinh</title>
+  <style>
+    /* Reset mặc định */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0px 6px 20px rgba(0,0,0,0.15);
+      width: 350px;
+      text-align: center;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: bold;
+      display: block;
+      text-align: left;
+      margin-bottom: 5px;
+      color: #444;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-color: #4a90e2;
+      outline: none;
+      box-shadow: 0px 0px 6px rgba(74,144,226,0.5);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #4a90e2;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #357ABD;
+    }
+
+    #result {
+      margin-top: 15px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Nhập thông tin</h2>
+    <form id="birthdayForm">
+      <label>Họ và tên:</label>
+      <input type="text" id="name" required placeholder="Nguyễn Văn A">
+
+      <label>Ngày sinh:</label>
+      <input type="date" id="birthday" required>
+
+      <button type="submit">Gửi</button>
+    </form>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzIYt5JLPlq4C0bkrEbKefMrOHqMENdKuuggJtmN3vuvh3QuiMSwussLH4-SPWLk9Je/exec"; // Dán link web app vào đây
+
+    document.getElementById("birthdayForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      let data = {
+        name: document.getElementById("name").value,
+        birthday: document.getElementById("birthday").value
+      };
+
+      fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify(data)
+      })
+      .then(response => response.text())
+      .then(result => {
+        document.getElementById("result").innerText = "✅ Gửi thành công!";
+        document.getElementById("result").style.color = "green";
+        document.getElementById("birthdayForm").reset();
+      })
+      .catch(error => {
+        document.getElementById("result").innerText = "❌ Có lỗi xảy ra!";
+        document.getElementById("result").style.color = "red";
+        console.error(error);
+      });
+    });
+  </script>
+</body>
+</html>

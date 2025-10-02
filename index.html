@@ -1,484 +1,450 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Thu thập ngày sinh</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tính tuổi thai theo ngày dự sinh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* Reset mặc định */
-    * {
-      margin: 0;
-      padding: 0;
+    *, *::before, *::after {
       box-sizing: border-box;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at 0% 0%, #a18cd1 0%, rgba(161, 140, 209, 0) 40%),
+                  radial-gradient(circle at 100% 0%, #fbc2eb 0%, rgba(251, 194, 235, 0) 45%),
+                  linear-gradient(135deg, #0f172a, #1f2937);
       min-height: 100vh;
+      color: #0f172a;
       display: flex;
-      justify-content: center;
       align-items: center;
-      padding: 40px 20px;
+      justify-content: center;
+      padding: 40px 16px;
     }
 
-    .container {
-      background: #fff;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0px 6px 20px rgba(0,0,0,0.15);
-      width: 420px;
-      text-align: center;
-      animation: fadeIn 0.8s ease-in-out;
+    .app-wrapper {
+      width: min(960px, 100%);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 32px;
+      align-items: start;
     }
 
-    h2 {
-      margin-bottom: 20px;
-      color: #333;
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 24px 48px rgba(15, 23, 42, 0.25);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      animation: floatIn 0.7s ease-out;
+    }
+
+    .glass-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      pointer-events: none;
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 36px);
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    p.lead {
+      color: #475569;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    form {
+      display: grid;
+      gap: 18px;
     }
 
     label {
+      font-weight: 600;
+      color: #1e293b;
       font-size: 14px;
-      font-weight: bold;
-      display: block;
-      text-align: left;
-      margin-bottom: 5px;
-      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
-      transition: 0.3s;
+    .input-group {
+      display: grid;
+      gap: 8px;
     }
 
-    input:focus {
-      border-color: #4a90e2;
+    input[type="date"] {
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 15px;
+      background: rgba(255, 255, 255, 0.8);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    input[type="date"]:focus {
       outline: none;
-      box-shadow: 0px 0px 6px rgba(74,144,226,0.5);
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+      transform: translateY(-1px);
     }
 
     button {
-      width: 100%;
-      padding: 12px;
-      background: #4a90e2;
+      padding: 15px 18px;
       border: none;
-      border-radius: 6px;
-      color: #fff;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 600;
       cursor: pointer;
-      transition: 0.3s;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     button:hover {
-      background: #357ABD;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(99, 102, 241, 0.35);
     }
 
-    #result {
-      margin-top: 15px;
-      font-size: 14px;
-      font-weight: bold;
-      min-height: 20px;
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
     }
 
-    .table-wrapper {
-      margin-top: 30px;
-      text-align: left;
+    .result-card {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+      padding: 24px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(129, 140, 248, 0.1));
+      border: 1px solid rgba(99, 102, 241, 0.15);
     }
 
-    .table-wrapper h3 {
-      margin-bottom: 10px;
-      color: #333;
-      text-align: center;
+    .gestational-age {
+      font-size: clamp(32px, 5vw, 42px);
+      font-weight: 700;
+      color: #4338ca;
+      letter-spacing: -1px;
     }
 
-    .table-wrapper p.status {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 10px;
-      text-align: center;
-      min-height: 18px;
+    .subtext {
+      color: #475569;
+      line-height: 1.5;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
+    .progress-wrapper {
+      background: rgba(15, 23, 42, 0.05);
+      border-radius: 999px;
+      overflow: hidden;
+      height: 12px;
+      position: relative;
     }
 
-    th, td {
-      border: 1px solid #e0e0e0;
-      padding: 8px;
-      text-align: left;
+    .progress-bar {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #6366f1, #ec4899);
+      width: 0;
+      transition: width 0.6s ease;
     }
 
-    th {
-      background-color: #f2f6ff;
-      color: #333;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    .actions {
+    .progress-label {
       display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #64748b;
     }
 
-    .actions button {
-      flex: 1;
-      padding: 6px 8px;
-      font-size: 12px;
+    .info-card {
+      display: grid;
+      gap: 18px;
     }
 
-    .actions button.secondary {
-      background: #9aa5b1;
+    .info-block {
+      background: rgba(15, 23, 42, 0.85);
+      color: white;
+      border-radius: 24px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .actions button.secondary:hover {
-      background: #7a8591;
+    .info-block::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(236, 72, 153, 0.35), transparent 55%);
+      pointer-events: none;
     }
 
-    .actions button.danger {
-      background: #e74c3c;
+    .info-block h2 {
+      margin: 0 0 12px;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
     }
 
-    .actions button.danger:hover {
-      background: #c0392b;
+    .info-block p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.88);
     }
 
-    .actions .disabled {
-      background: #d1d5db;
-      cursor: not-allowed;
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .timeline-item {
+      background: rgba(241, 245, 249, 0.9);
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      text-align: left;
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .timeline-item h3 {
+      margin: 0;
+      font-size: 15px;
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    .timeline-item span {
+      font-size: 28px;
+      font-weight: 700;
+      color: #6366f1;
+    }
+
+    .timeline-item p {
+      margin: 0;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 32px 12px;
+      }
+
+      .glass-card {
+        padding: 26px;
+      }
+
+      .timeline-item {
+        min-height: auto;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Nhập thông tin</h2>
-    <form id="birthdayForm">
-      <label>Họ và tên:</label>
-      <input type="text" id="name" required placeholder="Nguyễn Văn A">
+  <div class="app-wrapper">
+    <section class="glass-card">
+      <h1>Tính tuổi thai dựa trên ngày dự sinh</h1>
+      <p class="lead">
+        Ngày dự sinh thường tương ứng với mốc thai 40 tuần. Chỉ cần nhập ngày dự sinh dự kiến,
+        hệ thống sẽ giúp bạn ước tính tuổi thai hiện tại, số ngày còn lại đến ngày dự sinh và trạng thái thai kỳ.
+      </p>
+      <form id="calculator" novalidate>
+        <div class="input-group">
+          <label for="dueDate">Ngày dự sinh (40 tuần)</label>
+          <input type="date" id="dueDate" name="dueDate" required />
+        </div>
+        <button type="submit">Tính tuổi thai</button>
+      </form>
+      <div class="result-card" id="resultCard" hidden>
+        <div>
+          <span class="muted">Tuổi thai ước tính</span>
+          <div class="gestational-age" id="ageText">0 tuần</div>
+        </div>
+        <p class="subtext" id="statusText"></p>
+        <div class="progress-wrapper">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-label">
+          <span>0 tuần</span>
+          <span>40 tuần</span>
+        </div>
+        <p class="muted" id="countdownText"></p>
+      </div>
+    </section>
 
-      <label>Ngày sinh:</label>
-      <input type="date" id="birthday" required>
-
-      <button type="submit">Gửi</button>
-    </form>
-    <p id="result"></p>
-
-    <div class="table-wrapper">
-      <h3>Bảng mô tả dữ liệu</h3>
-      <p class="status" id="tableStatus">Đang tải dữ liệu...</p>
-      <table id="entriesTable">
-        <thead>
-          <tr>
-            <th>Thời gian</th>
-            <th>Họ và tên</th>
-            <th>Ngày sinh</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <section class="info-card">
+      <article class="info-block">
+        <h2>Thai kỳ của bạn trong nháy mắt</h2>
+        <p>
+          Tuổi thai được ước tính bằng cách lấy 40 tuần trừ đi số tuần còn lại đến ngày dự sinh bạn cung cấp.
+          Công cụ sử dụng số ngày thực tế (bao gồm cả phần lẻ) để mang lại kết quả chính xác từng ngày.
+        </p>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div>
+              <h3>Còn lại</h3>
+              <span id="weeksRemaining">--</span>
+            </div>
+            <p>Số tuần (và ngày) còn lại đến ngày dự sinh của bạn.</p>
+          </div>
+          <div class="timeline-item">
+            <div>
+              <h3>Đã đi qua</h3>
+              <span id="weeksElapsed">--</span>
+            </div>
+            <p>Tổng thời gian đã trải qua trong thai kỳ tính đến hiện tại.</p>
+          </div>
+          <div class="timeline-item">
+            <div>
+              <h3>Ngày dự sinh</h3>
+              <span id="dueDateDisplay">--</span>
+            </div>
+            <p>Hãy cập nhật nếu bác sĩ cung cấp ngày dự sinh mới.</p>
+          </div>
+        </div>
+      </article>
+      <article class="glass-card" style="background: rgba(255,255,255,0.8);">
+        <h2>Mẹo nhỏ</h2>
+        <p>
+          • Hãy ghi chú lại tuổi thai sau mỗi lần khám để so sánh.<br>
+          • Nếu ngày dự sinh thay đổi, cập nhật ngay để có số liệu chính xác.<br>
+          • Trao đổi với bác sĩ khi tuổi thai đã vượt quá 40 tuần để được tư vấn phù hợp.
+        </p>
+      </article>
+    </section>
   </div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzIYt5JLPlq4C0bkrEbKefMrOHqMENdKuuggJtmN3vuvh3QuiMSwussLH4-SPWLk9Je/exec"; // Dán link web app vào đây
+    const dueDateInput = document.getElementById("dueDate");
+    const form = document.getElementById("calculator");
+    const resultCard = document.getElementById("resultCard");
+    const ageText = document.getElementById("ageText");
+    const statusText = document.getElementById("statusText");
+    const countdownText = document.getElementById("countdownText");
+    const progressBar = document.getElementById("progressBar");
+    const weeksRemaining = document.getElementById("weeksRemaining");
+    const weeksElapsed = document.getElementById("weeksElapsed");
+    const dueDateDisplay = document.getElementById("dueDateDisplay");
 
-    const form = document.getElementById("birthdayForm");
-    const resultEl = document.getElementById("result");
-    const tableBody = document.querySelector("#entriesTable tbody");
-    const statusEl = document.getElementById("tableStatus");
+    const TOTAL_GESTATION_DAYS = 280; // 40 tuần
+    const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
+    function normalizeDate(date) {
+      const normalized = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12);
+      normalized.setHours(12, 0, 0, 0);
+      return normalized;
+    }
 
-      const data = {
-        name: document.getElementById("name").value.trim(),
-        birthday: document.getElementById("birthday").value
+    function formatWeeksAndDays(totalDays) {
+      const safeDays = Math.max(0, Math.round(totalDays));
+      const weeks = Math.floor(safeDays / 7);
+      const days = safeDays % 7;
+      return {
+        weeks,
+        days,
+        label: `${weeks} tuần${days ? ` ${days} ngày` : ""}`
       };
-
-      if (!data.name || !data.birthday) {
-        resultEl.innerText = "⚠️ Vui lòng nhập đầy đủ thông tin.";
-        resultEl.style.color = "#c0392b";
-        return;
-      }
-
-      resultEl.innerText = "⏳ Đang gửi...";
-      resultEl.style.color = "#444";
-
-      fetch(scriptURL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-        .then(response => response.text())
-        .then(() => {
-          resultEl.innerText = "✅ Gửi thành công!";
-          resultEl.style.color = "green";
-          form.reset();
-          fetchEntries();
-        })
-        .catch(error => {
-          console.error(error);
-          resultEl.innerText = "❌ Có lỗi xảy ra!";
-          resultEl.style.color = "red";
-        });
-    });
-
-    function setStatus(message, isError = false) {
-      statusEl.textContent = message;
-      statusEl.style.color = isError ? "#e74c3c" : "#666";
     }
 
-    function escapeHtml(value) {
-      return value == null
-        ? ""
-        : value.replace(/[&<>"']/g, function (char) {
-            return {
-              "&": "&amp;",
-              "<": "&lt;",
-              ">": "&gt;",
-              '"': "&quot;",
-              "'": "&#39;"
-            }[char];
-          });
-    }
+    function updateUi(gestationalDays, diffDays, dueDate) {
+      const clampedGestationalDays = Math.max(0, gestationalDays);
+      const { weeks, days, label } = formatWeeksAndDays(clampedGestationalDays);
+      ageText.textContent = label;
 
-    function toInputDate(value) {
-      if (!value) return "";
-      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-        return value;
-      }
+      const remainingDays = Math.max(diffDays, 0);
+      const remainingLabel = formatWeeksAndDays(remainingDays);
+      weeksRemaining.textContent = `${remainingLabel.weeks}w${remainingLabel.days ? ` ${remainingLabel.days}d` : ""}`;
 
-      const parts = value.split(/[\/-]/);
-      if (parts.length === 3) {
-        if (parts[0].length === 4) {
-          const [y, m, d] = parts;
-          return `${y.padStart(4, "0")}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
-        }
-        if (parts[2].length === 4) {
-          const [d, m, y] = parts;
-          return `${y.padStart(4, "0")}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
-        }
-      }
-      return value;
-    }
+      const elapsedLabel = formatWeeksAndDays(Math.max(0, Math.min(gestationalDays, TOTAL_GESTATION_DAYS)));
+      weeksElapsed.textContent = `${elapsedLabel.weeks}w${elapsedLabel.days ? ` ${elapsedLabel.days}d` : ""}`;
 
-    function renderRows(entries) {
-      tableBody.innerHTML = "";
+      const progress = Math.max(0, Math.min(gestationalDays / TOTAL_GESTATION_DAYS, 1));
+      progressBar.style.width = `${(progress * 100).toFixed(1)}%`;
 
-      if (!entries || entries.length === 0) {
-        setStatus("Chưa có dữ liệu hiển thị.");
-        return;
-      }
-
-      setStatus(`Đang hiển thị ${entries.length} dòng dữ liệu.`);
-
-      entries.forEach(entry => {
-        const row = document.createElement("tr");
-        const entryId = entry.id || entry.ID || entry.rowNumber || entry.Row || "";
-        row.dataset.id = entryId;
-
-        const timestampCell = document.createElement("td");
-        timestampCell.textContent = entry.timestamp || entry.Timestamp || entry.createdAt || "";
-
-        const nameCell = document.createElement("td");
-        nameCell.dataset.field = "name";
-        nameCell.textContent = entry.name || entry.hovaten || entry.fullName || "";
-
-        const birthdayCell = document.createElement("td");
-        birthdayCell.dataset.field = "birthday";
-        birthdayCell.textContent = entry.birthday || entry.ngaysinh || entry.birthDate || "";
-
-        const actionsCell = document.createElement("td");
-        actionsCell.classList.add("actions");
-
-        if (entryId) {
-          actionsCell.innerHTML = `
-            <button type="button" data-action="edit">Chỉnh sửa</button>
-            <button type="button" class="danger" data-action="delete">Xóa</button>
-          `;
-        } else {
-          const span = document.createElement("span");
-          span.textContent = "Không thể thao tác";
-          span.style.fontSize = "12px";
-          span.style.color = "#999";
-          actionsCell.style.justifyContent = "center";
-          actionsCell.appendChild(span);
-        }
-
-        row.appendChild(timestampCell);
-        row.appendChild(nameCell);
-        row.appendChild(birthdayCell);
-        row.appendChild(actionsCell);
-
-        tableBody.appendChild(row);
+      dueDateDisplay.textContent = dueDate.toLocaleDateString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
       });
+
+      if (gestationalDays < 0) {
+        const untilStart = formatWeeksAndDays(Math.abs(gestationalDays));
+        statusText.innerHTML = `Thai kỳ chưa bắt đầu. Còn khoảng <strong>${untilStart.label}</strong> nữa mới bước sang tuần đầu tiên.`;
+        countdownText.textContent = "";
+      } else if (gestationalDays > TOTAL_GESTATION_DAYS) {
+        const overdue = formatWeeksAndDays(gestationalDays - TOTAL_GESTATION_DAYS);
+        statusText.innerHTML = `Đã vượt quá mốc dự sinh khoảng <strong>${overdue.label}</strong>. Hãy liên hệ bác sĩ để được tư vấn phù hợp.`;
+        countdownText.textContent = "Đã qua ngày dự sinh.";
+      } else {
+        statusText.innerHTML = "Tuổi thai của bạn đang tiến triển bình thường. Tiếp tục theo dõi và chăm sóc sức khỏe mẹ và bé.";
+        countdownText.textContent = remainingDays === 0
+          ? "Hôm nay là ngày dự sinh!"
+          : `Còn ${remainingDays} ngày nữa đến ngày dự sinh.`;
+      }
+
+      resultCard.hidden = false;
     }
 
-    function fetchEntries() {
-      setStatus("Đang tải dữ liệu...");
-
-      fetch(`${scriptURL}?action=read`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (Array.isArray(data)) {
-            renderRows(data);
-          } else if (data && Array.isArray(data.records)) {
-            renderRows(data.records);
-          } else if (data && Array.isArray(data.data)) {
-            renderRows(data.data);
-          } else {
-            console.warn("Không nhận được dữ liệu hợp lệ", data);
-            renderRows([]);
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          setStatus("Không thể tải dữ liệu. Vui lòng thử lại sau.", true);
-        });
-    }
-
-    function enterEditMode(row) {
-      const nameCell = row.querySelector('td[data-field="name"]');
-      const birthdayCell = row.querySelector('td[data-field="birthday"]');
-      const currentName = nameCell.textContent.trim();
-      const currentBirthday = birthdayCell.textContent.trim();
-
-      nameCell.innerHTML = `<input type="text" value="${escapeHtml(currentName)}">`;
-      birthdayCell.innerHTML = `<input type="date" value="${escapeHtml(toInputDate(currentBirthday))}">`;
-
-      const actionsCell = row.querySelector(".actions");
-      actionsCell.innerHTML = `
-        <button type="button" data-action="save">Lưu</button>
-        <button type="button" class="secondary" data-action="cancel">Hủy</button>
-      `;
-
-      row.dataset.mode = "editing";
-    }
-
-    function saveRow(row) {
-      const id = row.dataset.id;
-      const nameInput = row.querySelector('td[data-field="name"] input');
-      const birthdayInput = row.querySelector('td[data-field="birthday"] input');
-
-      const payload = {
-        id,
-        name: nameInput ? nameInput.value.trim() : "",
-        birthday: birthdayInput ? birthdayInput.value : ""
-      };
-
-      if (!payload.name || !payload.birthday) {
-        alert("Vui lòng nhập đầy đủ thông tin.");
+    function calculate(event) {
+      event?.preventDefault();
+      if (!dueDateInput.value) {
+        resultCard.hidden = true;
         return;
       }
 
-      setStatus("Đang lưu thay đổi...");
+      const dueDate = normalizeDate(new Date(`${dueDateInput.value}T00:00:00`));
+      const today = normalizeDate(new Date());
 
-      fetch(`${scriptURL}?action=update`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      })
-        .then(response => response.text())
-        .then(() => {
-          setStatus("Đã lưu thay đổi.");
-          fetchEntries();
-        })
-        .catch(error => {
-          console.error(error);
-          setStatus("Không thể lưu thay đổi.", true);
-        });
+      const diffDays = Math.round((dueDate - today) / MS_PER_DAY);
+      const gestationalDays = TOTAL_GESTATION_DAYS - diffDays;
+
+      updateUi(gestationalDays, diffDays, dueDate);
     }
 
-    function cancelEdit(row) {
-      row.dataset.mode = "";
-      fetchEntries();
-    }
+    form.addEventListener("submit", calculate);
+    dueDateInput.addEventListener("change", () => calculate());
 
-    function deleteRow(row) {
-      const id = row.dataset.id;
-
-      if (!id) {
-        alert("Không tìm thấy mã dòng để xóa.");
-        return;
-      }
-
-      if (!confirm("Bạn có chắc muốn xóa dòng này?")) {
-        return;
-      }
-
-      setStatus("Đang xóa dữ liệu...");
-
-      fetch(`${scriptURL}?action=delete`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ id })
-      })
-        .then(response => response.text())
-        .then(() => {
-          setStatus("Đã xóa dữ liệu.");
-          fetchEntries();
-        })
-        .catch(error => {
-          console.error(error);
-          setStatus("Không thể xóa dữ liệu.", true);
-        });
-    }
-
-    tableBody.addEventListener("click", function (event) {
-      const button = event.target.closest("button[data-action]");
-      if (!button) {
-        return;
-      }
-
-      const row = button.closest("tr");
-      const action = button.dataset.action;
-
-      if (action === "edit") {
-        if (!row.dataset.id) {
-          alert("Không thể chỉnh sửa dòng này.");
-          return;
-        }
-        if (row.dataset.mode === "editing") {
-          return;
-        }
-        enterEditMode(row);
-      } else if (action === "save") {
-        saveRow(row);
-      } else if (action === "cancel") {
-        cancelEdit(row);
-      } else if (action === "delete") {
-        deleteRow(row);
-      }
-    });
-
-    fetchEntries();
+    // Tự động gợi ý ngày dự sinh là 40 tuần kể từ hôm nay để người dùng dễ hình dung
+    const today = new Date();
+    const suggestedDueDate = new Date(today.getTime() + TOTAL_GESTATION_DAYS * MS_PER_DAY);
+    dueDateInput.valueAsDate = suggestedDueDate;
+    calculate();
   </script>
 </body>
 </html>
